@@ -45,7 +45,11 @@ class TodoItemUpdateView(APIView):
             return Response(serializer.data)
         else:
             return Response({"error": "Invalid or missing 'checked' value"}, status=400)
-
+        
+    def delete(self, request, pk, format=None):
+        todo = TodoItem.objects.get(pk=pk)
+        todo.delete()
+        return Response(status=204)
 
 class LoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
