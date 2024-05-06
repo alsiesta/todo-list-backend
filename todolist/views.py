@@ -23,6 +23,28 @@ class TodoItemView(APIView):
         todos = TodoItem.objects.filter(author=request.user)
         serializer = TodoItemSerializer(todos, many=True)
         return Response(serializer.data)
+    
+    def post(self, request, format=None):
+        serializer = TodoItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+class TodoItemUpdateView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, pk, format=None):
+        todo = TodoItem.objects.get(pk=pk)
+        checked = request.data.get('checked')
+        if checked is not None:
+            todo.checked = checked
+            todo.save()
+            serializer = TodoItemSerializer(todo)
+            return Response(serializer.data)
+        else:
+            return Response({"error": "Invalid or missing 'checked' value"}, status=400)
 
 
 class LoginView(ObtainAuthToken):
