@@ -12,6 +12,6 @@ class TodoItem(models.Model):
     checked = models.BooleanField(default=False)
     
     def __str__(self):
-        return self.title
+        return f'({self.id})  {self.title}'
                                       
                                       
